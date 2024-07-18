@@ -1,0 +1,4 @@
+ARG GLUE_IMAGE_TAG=glue_libs_4.0.0_image_01-amd64
+
+FROM public.ecr.aws/glue/aws-glue-libs:$GLUE_IMAGE_TAG
+RUN pip3 install toml~="0.10.2" coverage~="7.2" pytest-cov~="4.1.0" pytest-dependency~="0.6.0"

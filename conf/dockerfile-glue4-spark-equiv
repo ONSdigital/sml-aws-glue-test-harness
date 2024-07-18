@@ -1,0 +1,10 @@
+FROM python:3.8-slim-bookworm
+
+RUN apt-get update && apt-get install curl -y && cd tmp && \
+    curl -L -O https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u412-b08/OpenJDK8U-jre_x64_linux_hotspot_8u412b08.tar.gz && \
+    mkdir -p /usr/lib/jvm/jre8.412 && \
+    tar zxvf /tmp/OpenJDK8U-jre_x64_linux_hotspot_8u412b08.tar.gz --strip-components 1 -C /usr/lib/jvm/jre8.412
+    
+RUN update-alternatives --install /usr/bin/java java /usr/lib/jvm/jre8.412/bin/java 1
+RUN pip install toml~="0.10.2" coverage~="7.2"  pytest~="7.4.4" pytest-cov~="4.1.0" pytest-dependency~="0.6.0" pyspark=="3.3.0"
+
