@@ -41,7 +41,7 @@ build-image-glue4-spark-equiv:
 	-t sml-testing:glue4-spark-equiv ./conf
 
 get-sml-release:
-ifneq ($(wildcard ./statistical-methods-library-13.3.9/.*),) 
+ifeq ("$(wildcard ./statistical-methods-library-13.3.0/.*)","") 
 	@echo getting SML-13.3.0
 	@curl -s -L --max-redirs 2 \
 	-O "https://github.com/ONSdigital/statistical-methods-library/archive/refs/tags/13.3.0.tar.gz"
@@ -53,12 +53,28 @@ else
 endif
 
 test-glue3:  build-image-glue3 get-sml-release
+ifdef FASTFAIL
+	@echo test run will exit on first failure
+	@cp ./statistical-methods-library-13.3.0/pyproject.toml.exitfirstfailure ./statistical-methods-library-13.3.0/pyproject.toml 
+
+else
+	@echo test run will run all tests, regardless of pass state.
+	@cp ./statistical-methods-library-13.3.0/pyproject.toml.alltests ./statistical-methods-library-13.3.0/pyproject.toml
+endif
 	@docker run --rm -it -v .:/home/smltest \
 	--entrypoint '' \
 	sml-testing:glue3 \
 	bash -c "cd /home/smltest/statistical-methods-library-13.3.0; python3 -m pytest | tee ../glue3-tests.log"
 
 test-glue4: build-image-glue4 get-sml-release
+ifdef FASTFAIL
+	@echo test run will exit on first failure
+	@cp ./statistical-methods-library-13.3.0/pyproject.toml.exitfirstfailure ./statistical-methods-library-13.3.0/pyproject.toml 
+
+else
+	@echo test run will run all tests, regardless of pass state.
+	@cp ./statistical-methods-library-13.3.0/pyproject.toml.alltests ./statistical-methods-library-13.3.0/pyproject.toml
+endif
 	@echo running glue 4 tests
 	@docker run --rm -it -v .:/home/smltest \
 	--entrypoint '' \
@@ -66,6 +82,14 @@ test-glue4: build-image-glue4 get-sml-release
 	bash -l -c "cd /home/smltest/statistical-methods-library-13.3.0; python3 -m pytest | tee ../glue4-tests.log"
 
 test-glue4-spark-equiv: build-image-glue4-spark-equiv get-sml-release
+ifdef FASTFAIL
+	@echo test run will exit on first failure
+	@cp ./statistical-methods-library-13.3.0/pyproject.toml.exitfirstfailure ./statistical-methods-library-13.3.0/pyproject.toml 
+
+else
+	@echo test run will run all tests, regardless of pass state.
+	@cp ./statistical-methods-library-13.3.0/pyproject.toml.alltests ./statistical-methods-library-13.3.0/pyproject.toml
+endif
 	@docker run --rm -it -v .:/home/smltest \
 	sml-testing:glue4-spark-equiv \
 	bash -c "cd /home/smltest/statistical-methods-library-13.3.0; python -m pytest | tee ../glue4-spark-equiv-tests.log"
