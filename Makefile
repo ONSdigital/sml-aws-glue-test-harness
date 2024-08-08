@@ -61,7 +61,7 @@ else
 	@echo test run will run all tests, regardless of pass state.
 	@cp ./statistical-methods-library-13.3.0/pyproject.toml.alltests ./statistical-methods-library-13.3.0/pyproject.toml
 endif
-	@docker run --rm -it -v .:/home/smltest \
+	@docker run --rm -it -v $(shell pwd)/:/home/smltest \
 	--entrypoint '' \
 	sml-testing:glue3 \
 	bash -c "cd /home/smltest/statistical-methods-library-13.3.0; python3 -m pytest | tee ../glue3-tests.log"
@@ -76,7 +76,7 @@ else
 	@cp ./statistical-methods-library-13.3.0/pyproject.toml.alltests ./statistical-methods-library-13.3.0/pyproject.toml
 endif
 	@echo running glue 4 tests
-	@docker run --rm -it -v .:/home/smltest \
+	@docker run --rm -it -v $(shell pwd)/:/home/smltest \
 	--entrypoint '' \
 	sml-testing:glue4 \
 	bash -l -c "cd /home/smltest/statistical-methods-library-13.3.0; python3 -m pytest | tee ../glue4-tests.log"
@@ -90,7 +90,7 @@ else
 	@echo test run will run all tests, regardless of pass state.
 	@cp ./statistical-methods-library-13.3.0/pyproject.toml.alltests ./statistical-methods-library-13.3.0/pyproject.toml
 endif
-	@docker run --rm -it -v .:/home/smltest \
+	@docker run --rm -it -v $(shell pwd):/home/smltest \
 	sml-testing:glue4-spark-equiv \
 	bash -c "cd /home/smltest/statistical-methods-library-13.3.0; python -m pytest | tee ../glue4-spark-equiv-tests.log"
 
