@@ -1,0 +1,10 @@
+FROM python:3.11-slim-bookworm
+
+RUN apt-get update && apt-get install curl -y && cd tmp && \
+    curl -L -O https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.13%2B11/OpenJDK17U-jre_x64_linux_hotspot_17.0.13_11.tar.gz && \
+    mkdir -p /usr/lib/jvm/jre17.013 && \
+    tar zxvf /tmp/OpenJDK17U-jre_x64_linux_hotspot_17.0.13_11.tar.gz --strip-components 1 -C /usr/lib/jvm/jre17.013
+    
+RUN update-alternatives --install /usr/bin/java java /usr/lib/jvm/jre17.013/bin/java 1
+RUN pip install toml~="0.10.2" coverage~="7.2"  pytest~="7.4.4" pytest-cov~="4.1.0" pytest-dependency~="0.6.0" pyspark=="3.5.2"
+
