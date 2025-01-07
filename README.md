@@ -19,6 +19,9 @@ Run tests using Glue v4
 Run tests using pure spark v4
 `make test-glue4-spark-equiv`
 
+Run tests using pure spark v5
+`make test-glue5-spark-equiv`
+
 By default all tests are run, alternatively you can make the exit after the first test failure by defining a FAILFAST variable when calling make
 
 e.g to run the glue v4 tests, exiting after the first failing test
