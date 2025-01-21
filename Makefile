@@ -40,6 +40,12 @@ build-image-glue4-spark-equiv:
 	-f conf/dockerfile-glue4-spark-equiv \
 	-t sml-testing:glue4-spark-equiv ./conf
 
+build-image-glue5-spark-equiv:
+	@echo building spark-glue5-equiv image
+	@docker buildx build \
+	-f conf/dockerfile-glue5-spark-equiv \
+	-t sml-testing:glue5-spark-equiv ./conf
+
 get-sml-release:
 ifeq ("$(wildcard ./statistical-methods-library-13.3.0/.*)","") 
 	@echo getting SML-13.3.0
@@ -94,10 +100,24 @@ endif
 	sml-testing:glue4-spark-equiv \
 	bash -c "cd /home/smltest/statistical-methods-library-13.3.0; python -m pytest | tee ../glue4-spark-equiv-tests.log"
 
+test-glue5-spark-equiv: build-image-glue5-spark-equiv get-sml-release
+ifdef FASTFAIL
+	@echo test run will exit on first failure
+	@cp ./statistical-methods-library-13.3.0/pyproject.toml.exitfirstfailure ./statistical-methods-library-13.3.0/pyproject.toml 
+
+else
+	@echo test run will run all tests, regardless of pass state.
+	@cp ./statistical-methods-library-13.3.0/pyproject.toml.alltests ./statistical-methods-library-13.3.0/pyproject.toml
+endif
+	@docker run --rm -it -v $(shell pwd):/home/smltest \
+	sml-testing:glue5-spark-equiv \
+	bash -c "cd /home/smltest/statistical-methods-library-13.3.0; python -m pytest | tee ../glue5-spark-equiv-tests.log"
+
 clean:
 	@echo cleaning up build artifacts
 	@-docker rmi sml-testing:glue3
 	@-docker rmi sml-testing:glue4
 	@-docker rmi sml-testing:glue4-spark-equiv
+	@-docker rmi sml-testing:glue5-spark-equiv
 	@-rm -rf ./statistical-methods-library-13.3.0
 
